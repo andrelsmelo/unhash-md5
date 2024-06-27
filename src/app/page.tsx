@@ -26,7 +26,10 @@ export default function Home() {
       const data = { md5 }
       md5Schema.parse(data)
 
-      const response = await fetch(`/api/crack?md5=${encodeURIComponent(md5)}`)
+      const response = await fetch(
+        `/api/crack?md5=${encodeURIComponent(md5)}`,
+        { signal: AbortSignal.timeout(45000) },
+      )
       if (response.ok) {
         const responseData = await response.json()
         setResult(responseData.result)
@@ -63,7 +66,6 @@ export default function Home() {
               setError(null)
               setResult(null)
             }}
-            onBlur={() => setError(null)}
           />
           <Button
             variant="primary"
