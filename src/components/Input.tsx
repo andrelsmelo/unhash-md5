@@ -10,7 +10,7 @@ const variantClasses: {
 }
 
 const Input = ({ variant, ...props }: InputProps) => {
-  const className = `px-4 py-2 text-primary border-2 border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${variantClasses[variant]}`
+  const className = `px-4 py-2 text-black border-2 border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${variantClasses[variant]}`
   return <input className={className} {...props} />
 }
 
