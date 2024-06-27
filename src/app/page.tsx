@@ -1,8 +1,8 @@
 'use client'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
-import { useState, useEffect } from 'react'
-import { set, z } from 'zod'
+import { useState } from 'react'
+import { z } from 'zod'
 
 const md5Schema = z.object({
   md5: z.coerce
@@ -10,8 +10,6 @@ const md5Schema = z.object({
     .min(1, 'Required')
     .regex(/^[a-f0-9]{32}$/, 'Invalid MD5 hash'),
 })
-
-type FormData = z.infer<typeof md5Schema>
 
 export default function Home() {
   const [md5, setMd5] = useState('')
@@ -26,10 +24,20 @@ export default function Home() {
       const data = { md5 }
       md5Schema.parse(data)
 
+      const controller = new AbortController()
+      const signal = controller.signal
+
+      const timeout = setTimeout(() => {
+        controller.abort()
+      }, 45000)
+
       const response = await fetch(
         `/api/crack?md5=${encodeURIComponent(md5)}`,
-        { signal: AbortSignal.timeout(45000) },
+        { signal },
       )
+
+      clearTimeout(timeout)
+
       if (response.ok) {
         const responseData = await response.json()
         setResult(responseData.result)
@@ -38,8 +46,9 @@ export default function Home() {
         setResult('Unable to fetch result')
       }
     } catch (error) {
+      console.log(error)
       setResult(null)
-      setError('Invalid MD5 hash')
+      setError('Ocorreu um erro inesperado')
     } finally {
       setLoading(false)
     }
